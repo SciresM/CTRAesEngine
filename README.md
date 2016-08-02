@@ -21,4 +21,4 @@ var engine = new AesEngine();
 **Licensing:**
 
 This software is licensed under the terms of the GPLv3.  
-You can find a copy of the license in the LICENSE.txt file.
+You can find a copy of the license in the LICENSE file.
