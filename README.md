@@ -1,9 +1,7 @@
 # CTRAesEngine
 C# Library to simulate the 3DS's hardware AES engine.
 
-Edit the hardcoded keys to your liking, build, then include in a C# project.
-
-Alternatively, wait for public dumps of the 3DS's bootrom to appear and for me to implement loading keys from it.
+Acquire a copy of the 3ds's protected ARM9 bootrom, build, then include in a C# project.
 
 To use:
 ```C#
@@ -12,6 +10,8 @@ using CTR;
 // ...
 
 var engine = new AesEngine();
+// Optionally, load console unique keys as follows:
+engine.SetOTP(my_encrypted_otp);
 ```
 
 **Credits:**
