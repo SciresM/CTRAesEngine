@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 
 namespace CTR
-{            
+{
     public class KeyScrambler
     {
         // I think at this point we can include these constants in public repositories.
@@ -17,23 +17,23 @@ namespace CTR
         {
             0xFF, 0xFE, 0xFB, 0x4E, 0x29, 0x59, 0x02, 0x58, 0x2A, 0x68, 0x0F, 0x5F, 0x1A, 0x4F, 0x3E, 0x79
         };
-    
+
         public static byte[] GetNormalKey(byte[] KeyX, byte[] KeyY)
         {
             if (KeyX.Length != 0x10 || KeyY.Length != 0x10)
-                throw new ArgumentException("Invalid Key Length");   
-            
+                throw new ArgumentException("Invalid Key Length");
+
             BigInteger Key = ToUnsignedBigInteger(XOR(RotateLeft(KeyX, 2), KeyY));
             BigInteger C = ToUnsignedBigInteger(SecretConstant);
-            
+
             byte[] NormalKey = BigInteger.Add(Key, C).ToByteArray();
-            
+
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(NormalKey);
 
             if (NormalKey.Length > 0x10)
                 NormalKey = NormalKey.Skip(1).Take(0x10).ToArray();
-            
+
             return RotateRight(NormalKey, 41);
         }
 
@@ -55,19 +55,19 @@ namespace CTR
 
             return RotateLeft(NormalKey, 42);
         }
-                                                                           
+
         private static byte[] XOR(byte[] arr1, byte[] arr2)
         {
             if (arr1.Length != arr2.Length)
                 throw new ArgumentException("Array Lengths must be equal.");
             byte[] xored = new byte[arr1.Length];
-            for (int i=0;i<arr1.Length;i++)
+            for (int i = 0; i < arr1.Length; i++)
             {
-                xored[i] = (byte)(arr1[i] ^ arr2[i]);    
+                xored[i] = (byte)(arr1[i] ^ arr2[i]);
             }
             return xored;
         }
-        
+
         private static BigInteger ToUnsignedBigInteger(byte[] data)
         {
             if (BitConverter.IsLittleEndian)
@@ -75,7 +75,7 @@ namespace CTR
             else
                 return new BigInteger(new byte[] { 0 }.Concat(data).ToArray());
         }
-             
+
         private static byte[] RotateLeft(byte[] input, int shift)
         {
             int N = (input.Length * 8) - (shift % (input.Length * 8));
@@ -83,23 +83,23 @@ namespace CTR
             byte[] output = new byte[input.Length];
             foreach (byte b in input.Reverse())
             {
-                for (int i=0;i<8;i++)
+                for (int i = 0; i < 8; i++)
                 {
-                    bits.Add((b >> i) & 1);   
+                    bits.Add((b >> i) & 1);
                 }
             }
             bits = bits.Skip(N).Concat(bits.Take(N)).ToList();
-            for (int i=0;i<output.Length;i++)
+            for (int i = 0; i < output.Length; i++)
             {
-                for (int j=0;j<8;j++)
+                for (int j = 0; j < 8; j++)
                 {
-                    output[i] |= (byte)(bits[i*8+j] << j);  
+                    output[i] |= (byte)(bits[i * 8 + j] << j);
                 }
             }
             output = output.Reverse().ToArray();
             return output;
         }
-        
+
         private static byte[] RotateRight(byte[] input, int shift)
         {
             int N = shift % (input.Length * 8);
@@ -107,17 +107,17 @@ namespace CTR
             byte[] output = new byte[input.Length];
             foreach (byte b in input.Reverse())
             {
-                for (int i=0;i<8;i++)
+                for (int i = 0; i < 8; i++)
                 {
-                    bits.Add((b >> i) & 1);  
+                    bits.Add((b >> i) & 1);
                 }
             }
             bits = bits.Skip(N).Concat(bits.Take(N)).ToList();
-            for (int i=0;i<output.Length;i++)
+            for (int i = 0; i < output.Length; i++)
             {
-                for (int j=0;j<8;j++)
+                for (int j = 0; j < 8; j++)
                 {
-                    output[i] |= (byte)(bits[i*8+j] << j);  
+                    output[i] |= (byte)(bits[i * 8 + j] << j);
                 }
             }
             output = output.Reverse().ToArray();

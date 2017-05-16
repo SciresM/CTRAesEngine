@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -37,6 +38,26 @@ namespace AesEngineTest
         }
 
         [TestMethod]
+        public void TestNCCHCrypto()
+        {
+            var e = new AesEngine();
+            e.InitializeKeyslots();
+            using (MemoryStream inStream = new MemoryStream())
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                inStream.Write(Resources.nfirm, 0, Resources.nfirm.Length);
+                outStream.Write(Resources.nfirm, 0, Resources.nfirm.Length);
+                inStream.Seek(0, SeekOrigin.Begin);
+                outStream.Seek(0, SeekOrigin.Begin);
+                var Engine = new AesEngine();
+                Engine.InitializeKeyslots();
+                Engine.DecryptNCCH(inStream, outStream);
+                outStream.Seek(0, SeekOrigin.Begin);
+                ValidateNCCH(outStream);
+            }
+        }
+
+        [TestMethod]
         public void TestNCSDCrypto()
         {
             using (MemoryStream inStream = new MemoryStream())
@@ -49,7 +70,6 @@ namespace AesEngineTest
                 var Engine = new AesEngine();
                 Engine.DecryptGameNCSD(inStream, outStream);
                 outStream.Seek(0, SeekOrigin.Begin);
-                File.WriteAllBytes("E:/fbi_dec.3ds",outStream.ToArray());
                 ValidateGameNSCD(outStream);
             }
         }

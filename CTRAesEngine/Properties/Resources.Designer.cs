@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AesEngineTest.Properties {
+namespace CTRAesEngine.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace AesEngineTest.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AesEngineTest.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CTRAesEngine.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,9 @@ namespace AesEngineTest.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] FBI_zerokeys_3ds {
+        internal static byte[] boot9_prot {
             get {
-                object obj = ResourceManager.GetObject("FBI_zerokeys_3ds", resourceCulture);
+                object obj = ResourceManager.GetObject("boot9_prot", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace AesEngineTest.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] FBI_zerokeys_ncch {
+        internal static byte[] n3ds_keysector_dev {
             get {
-                object obj = ResourceManager.GetObject("FBI_zerokeys_ncch", resourceCulture);
+                object obj = ResourceManager.GetObject("n3ds_keysector_dev", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace AesEngineTest.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] nfirm {
+        internal static byte[] n3ds_keysector_retail {
             get {
-                object obj = ResourceManager.GetObject("nfirm", resourceCulture);
+                object obj = ResourceManager.GetObject("n3ds_keysector_retail", resourceCulture);
                 return ((byte[])(obj));
             }
         }

@@ -73,6 +73,7 @@
   <ItemGroup>
     <None Include="Resources\_bin\FBI_zerokeys.3ds" />
     <None Include="Resources\_bin\FBI_zerokeys.ncch" />
+    <None Include="Resources\_bin\nfirm.ncch" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

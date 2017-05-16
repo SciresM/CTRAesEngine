@@ -89,7 +89,7 @@ namespace CTR
                     ? blockLength : blockLength + ((_symAlg.BlockSize / 8) - (blockLength % (_symAlg.BlockSize / 8)));
                 _encryptor.TransformBlock(ManageBufferCounters(blockLength), 0, passLen, encryptedBuffer, 0);
                 Array.Copy(encryptedBuffer, 0, outputBuffer, outputOffset + i, blockLength);
-                for (int ofs = i; ofs < (i + blockLength) && ofs < inputCount; ofs ++)
+                for (int ofs = i; ofs < (i + blockLength) && ofs < inputCount; ofs++)
                 {
                     outputBuffer[outputOffset + ofs] ^= inputBuffer[inputOffset + ofs];
                 }

@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="FBI_zerokeys_3ds" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\_bin\fbi_zerokeys.3ds;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="boot9_prot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\_byte\boot9_prot.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="FBI_zerokeys_ncch" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\_bin\fbi_zerokeys.ncch;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="n3ds_keysector_dev" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\_byte\n3ds_keysector_dev.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="nfirm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\_bin\nfirm.ncch;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="n3ds_keysector_retail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\_byte\n3ds_keysector_retail.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
