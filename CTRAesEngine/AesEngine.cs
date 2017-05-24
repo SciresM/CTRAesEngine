@@ -527,7 +527,7 @@ namespace CTR
         {
             // Will use LoadKeysFromBootrom() implementation for those who
             // don't want to manually compile with bootrom as a resource.
-            var keyarea_ofs = (IsDev) ? 0x5C60 : 0x5860;
+            var keyarea_ofs = (IsDev) ? 0xDC60 : 0xD860;
 
             var keyX = new byte[0x10];
             var keyY = new byte[0x10];
@@ -698,7 +698,7 @@ namespace CTR
 
             OTP_d = DecryptOTP(OTP);
 
-            var keyarea_ofs = (IsDev) ? 0x5C60 : 0x5860;
+            var keyarea_ofs = (IsDev) ? 0xDC60 : 0xD860;
             var otp_pos = (new SHA256Managed().ComputeHash(OTP_d, 0, 0xE0).SequenceEqual(OTP_d.Skip(0xE0))) ? 0x90 : 0x0;
             var hashdata = new byte[0x40];
             Array.Copy(OTP_d, otp_pos, hashdata, 0, 0x1C);
