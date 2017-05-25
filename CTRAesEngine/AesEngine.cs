@@ -40,8 +40,30 @@ namespace CTR
 
         private byte[] _nandcid;
 
+        private byte[] _boot9;
+        private int _boot9_prot_ofs;
+
+        private byte[] _boot9_hash = new byte[]
+        {
+            0x5A, 0xDD, 0xF3, 0x0E, 0xCB, 0x46, 0xC6, 0x24, 0xFA, 0x97, 0xBF, 0x1E, 0x83, 0x30, 0x3C, 0xE5,
+            0xD3, 0x6F, 0xAB, 0xB4, 0x52, 0x5C, 0x08, 0xC9, 0x66, 0xCB, 0xAF, 0x0A, 0x39, 0x7F, 0xE4, 0xC3,
+            0x3D, 0x8A, 0x4A, 0xD1, 0x7F, 0xD0, 0xF4, 0xF5, 0x09, 0xF5, 0x47, 0x94, 0x77, 0x79, 0xE1, 0xB2,
+            0xDB, 0x32, 0xAB, 0xC0, 0x47, 0x1E, 0x78, 0x5C, 0xAC, 0xB3, 0xE2, 0xDD, 0xE9, 0xB8, 0xC4, 0x92
+        };
+
         public AesEngine()
         {
+            var hash = new SHA512Managed().ComputeHash(Resources.boot9);
+            if (hash.SequenceEqual(_boot9_hash))
+            {
+                _boot9 = (byte[])Resources.boot9.Clone();
+                _boot9_prot_ofs = 0x8000;
+            }
+            else
+            {
+                _boot9 = (byte[]) Resources.boot9_prot.Clone();
+            }
+
             KeyXs = new byte[0x40][];
             KeyYs = new byte[0x40][];
             NormalKeys = new byte[0x40][];
@@ -520,7 +542,7 @@ namespace CTR
 
         public void LoadBootromKeys()
         {
-            LoadKeysFromBootromFile((byte[])Resources.boot9_prot.Clone());
+            LoadKeysFromBootromFile(_boot9);
         }
 
         public void LoadKeysFromBootromFile(byte[] boot9)
@@ -528,6 +550,7 @@ namespace CTR
             // Will use LoadKeysFromBootrom() implementation for those who
             // don't want to manually compile with bootrom as a resource.
             var keyarea_ofs = (IsDev) ? 0x5C60 : 0x5860;
+            keyarea_ofs += _boot9_prot_ofs;
 
             var keyX = new byte[0x10];
             var keyY = new byte[0x10];
@@ -677,11 +700,13 @@ namespace CTR
             }
 
             var otpkey_ofs = (IsDev) ? 0x5710 : 0x56E0;
+            otpkey_ofs += _boot9_prot_ofs;
+            
             var otpkey = new byte[0x10];
             var otpiv = new byte[0x10];
             var OTP_dec = new byte[o.Length];
-            Array.Copy(Resources.boot9_prot, otpkey_ofs, otpkey, 0, 0x10);
-            Array.Copy(Resources.boot9_prot, otpkey_ofs + 0x10, otpiv, 0, 0x10);
+            Array.Copy(_boot9, otpkey_ofs, otpkey, 0, 0x10);
+            Array.Copy(_boot9, otpkey_ofs + 0x10, otpiv, 0, 0x10);
             using (var _aes = new AesManaged { Key = otpkey, IV = otpiv, Mode = CipherMode.CBC, Padding = PaddingMode.None })
             {
                 _aes.CreateDecryptor(_aes.Key, _aes.IV).TransformBlock(OTP, 0, OTP.Length, OTP_dec, 0);
@@ -699,10 +724,12 @@ namespace CTR
             OTP_d = DecryptOTP(OTP);
 
             var keyarea_ofs = (IsDev) ? 0x5C60 : 0x5860;
+            keyarea_ofs += _boot9_prot_ofs;
+
             var otp_pos = (new SHA256Managed().ComputeHash(OTP_d, 0, 0xE0).SequenceEqual(OTP_d.Skip(0xE0))) ? 0x90 : 0x0;
             var hashdata = new byte[0x40];
             Array.Copy(OTP_d, otp_pos, hashdata, 0, 0x1C);
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, hashdata, 0x1C, 0x24);
+            Array.Copy(_boot9, keyarea_ofs, hashdata, 0x1C, 0x24);
             var hash = new SHA256Managed().ComputeHash(hashdata);
             SetMode(AesMode.CBC);
             SetKeyX(0x3F, hash.Take(0x10).ToArray());
@@ -712,9 +739,9 @@ namespace CTR
             keyarea_ofs += 0x24;
 
             var aesiv = new byte[0x10];
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, aesiv, 0, 0x10);
+            Array.Copy(_boot9, keyarea_ofs, aesiv, 0, 0x10);
             keyarea_ofs += 0x10;
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, hashdata, 0, 0x40);
+            Array.Copy(_boot9, keyarea_ofs, hashdata, 0, 0x40);
             keyarea_ofs += 0x40;
             SetIV(aesiv);
             var keydata = Encrypt(hashdata);
@@ -726,9 +753,9 @@ namespace CTR
             }
             SetKeyX(0x10, keydata.Skip(0x30).Take(0x10).ToArray());
 
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, aesiv, 0, 0x10);
+            Array.Copy(_boot9, keyarea_ofs, aesiv, 0, 0x10);
             keyarea_ofs += 0x10;
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, hashdata, 0, 0x40);
+            Array.Copy(_boot9, keyarea_ofs, hashdata, 0, 0x40);
             keyarea_ofs += 0x10;
             SetIV(aesiv);
             keydata = Encrypt(hashdata);
@@ -737,9 +764,9 @@ namespace CTR
                 SetKeyX(0x14 + i, keydata.Skip(0x10 * i).Take(0x10).ToArray());
             }
 
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, aesiv, 0, 0x10);
+            Array.Copy(_boot9, keyarea_ofs, aesiv, 0, 0x10);
             keyarea_ofs += 0x10;
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, hashdata, 0, 0x40);
+            Array.Copy(_boot9, keyarea_ofs, hashdata, 0, 0x40);
             keyarea_ofs += 0x40;
             SetIV(aesiv);
             keydata = Encrypt(hashdata);
@@ -751,9 +778,9 @@ namespace CTR
             }
             SetKeyX(0x24, keydata.Skip(0x30).Take(0x10).ToArray());
 
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, aesiv, 0, 0x10);
+            Array.Copy(_boot9, keyarea_ofs, aesiv, 0, 0x10);
             keyarea_ofs += 0x10;
-            Array.Copy(Resources.boot9_prot, keyarea_ofs, hashdata, 0, 0x40);
+            Array.Copy(_boot9, keyarea_ofs, hashdata, 0, 0x40);
             SetIV(aesiv);
             keydata = Encrypt(hashdata);
             for (var i = 0; i < 4; i++)
