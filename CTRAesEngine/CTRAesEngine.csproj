@@ -57,6 +57,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\_byte\boot9.bin" />
     <None Include="Resources\_byte\boot9_prot.bin" />
     <None Include="Resources\_byte\n3ds_keysector_dev.bin" />
     <None Include="Resources\_byte\n3ds_keysector_retail.bin" />
