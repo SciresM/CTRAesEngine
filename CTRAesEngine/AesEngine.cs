@@ -42,27 +42,24 @@ namespace CTR
 
         private byte[] _boot9;
         private int _boot9_prot_ofs;
+        private bool _boot9Valid;
 
-        private byte[] _boot9_hash = new byte[]
-        {
-            0x5A, 0xDD, 0xF3, 0x0E, 0xCB, 0x46, 0xC6, 0x24, 0xFA, 0x97, 0xBF, 0x1E, 0x83, 0x30, 0x3C, 0xE5,
-            0xD3, 0x6F, 0xAB, 0xB4, 0x52, 0x5C, 0x08, 0xC9, 0x66, 0xCB, 0xAF, 0x0A, 0x39, 0x7F, 0xE4, 0xC3,
-            0x3D, 0x8A, 0x4A, 0xD1, 0x7F, 0xD0, 0xF4, 0xF5, 0x09, 0xF5, 0x47, 0x94, 0x77, 0x79, 0xE1, 0xB2,
-            0xDB, 0x32, 0xAB, 0xC0, 0x47, 0x1E, 0x78, 0x5C, 0xAC, 0xB3, 0xE2, 0xDD, 0xE9, 0xB8, 0xC4, 0x92
-        };
+        private byte[] _boot9_hash = ("5ADDF30ECB46C624FA97BF1E83303CE5" +
+                                      "D36FABB4525C08C966CBAF0A397FE4C3" +
+                                      "3D8A4AD17FD0F4F509F547947779E1B2" +
+                                      "DB32ABC0471E785CACB3E2DDE9B8C492").ToByteArray();
+
+        private byte[] _boot9_prot_hash = ("D1F10601193B4154D8C7667102F7C5E2" + 
+                                           "70FEA49D50B04C6F7E374DBF15937C1A" + 
+                                           "5568236BB551A5CB73BF789C9454C272" + 
+                                           "7118C5EB849F0728561273B684CA1AE7").ToByteArray();
 
         public AesEngine()
         {
             var hash = new SHA512Managed().ComputeHash(Resources.boot9);
-            if (hash.SequenceEqual(_boot9_hash))
-            {
-                _boot9 = (byte[])Resources.boot9.Clone();
-                _boot9_prot_ofs = 0x8000;
-            }
-            else
-            {
-                _boot9 = (byte[]) Resources.boot9_prot.Clone();
-            }
+            _boot9 = hash.SequenceEqual(_boot9_hash)
+                ? (byte[]) Resources.boot9.Clone()
+                : (byte[]) Resources.boot9_prot.Clone();
 
             KeyXs = new byte[0x40][];
             KeyYs = new byte[0x40][];
@@ -83,6 +80,12 @@ namespace CTR
 
             InitializeKeyslots();
             Slot = 0;
+        }
+
+        public bool IsBootRomLoaded
+        {
+            get { return _boot9Valid; }
+            private set { _boot9Valid = value; }
         }
 
         public void SetDev(bool dev)
@@ -549,6 +552,16 @@ namespace CTR
         {
             // Will use LoadKeysFromBootrom() implementation for those who
             // don't want to manually compile with bootrom as a resource.
+            var hash = new SHA512Managed().ComputeHash(boot9);
+            if (hash.SequenceEqual(_boot9_hash) || hash.SequenceEqual(_boot9_prot_hash))
+            {
+                IsBootRomLoaded = true;
+                _boot9 = boot9;
+                _boot9_prot_ofs = hash.SequenceEqual(_boot9_hash)
+                    ? 0x8000
+                    : 0;
+            }
+
             var keyarea_ofs = (IsDev) ? 0x5C60 : 0x5860;
             keyarea_ofs += _boot9_prot_ofs;
 
