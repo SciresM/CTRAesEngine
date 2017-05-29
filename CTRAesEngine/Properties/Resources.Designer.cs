@@ -63,6 +63,16 @@ namespace CTRAesEngine.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] boot9 {
+            get {
+                object obj = ResourceManager.GetObject("boot9", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] boot9_prot {
             get {
                 object obj = ResourceManager.GetObject("boot9_prot", resourceCulture);
