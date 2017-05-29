@@ -712,7 +712,7 @@ namespace CTR
                 return null;
             }
 
-            var otpkey_ofs = (IsDev) ? 0x5710 : 0x56E0;
+            var otpkey_ofs = (IsDev) ? 0x5700 : 0x56E0;
             otpkey_ofs += _boot9_prot_ofs;
             
             var otpkey = new byte[0x10];
@@ -722,7 +722,7 @@ namespace CTR
             Array.Copy(_boot9, otpkey_ofs + 0x10, otpiv, 0, 0x10);
             using (var _aes = new AesManaged { Key = otpkey, IV = otpiv, Mode = CipherMode.CBC, Padding = PaddingMode.None })
             {
-                _aes.CreateDecryptor(_aes.Key, _aes.IV).TransformBlock(OTP, 0, OTP.Length, OTP_dec, 0);
+                _aes.CreateDecryptor(_aes.Key, _aes.IV).TransformBlock(o, 0, o.Length, OTP_dec, 0);
             }
 
 
